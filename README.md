@@ -23,19 +23,20 @@ As a tool for backing up and restoring database instances, it would benefit from
 
 ### Expected Behavior
 
-The tool should show Google Cloud as an available option for providers, and have Google Cloud configuration in create and edit mode.
+Google Cloud Storage should appear as a fully selectable provider in the "Add Storage Channel" dialog. Users should be able to configure a GCS bucket (providing credentials such as a service account key, bucket name, and project ID) in both create and edit modes, and Portabase should be able to ping, upload, get, and delete objects from that bucket.
 
 ### Current Behavior
 
-There is no current support and integration with Google Cloud as a provider.
+Google Cloud Storage is shown in the provider list as "Coming soon!" and cannot be selected or configured. There is no backend provider implementation, no validation schema, and no UI form for it.
 
 ### Affected Components
 
 Relevant files: 
+src/features/storages/providers/google-cloud-storage.ts (to be created)
 src/features/storages/providers/index.ts
 src/features/storages/types.ts
-src/components/wrappers/dashboard/admin/channels/channel/channel-form/providers/storages/forms/google-cloud-storage.schema.ts
-src/components/wrappers/dashboard/admin/channels/channel/channel-form/providers/storages/forms/google-cloud-storage.form.tsx
+src/components/wrappers/dashboard/admin/channels/channel/channel-form/providers/storages/forms/google-cloud-storage.schema.ts (to be created)
+src/components/wrappers/dashboard/admin/channels/channel/channel-form/providers/storages/forms/google-cloud-storage.form.tsx (to be created)
 src/components/wrappers/dashboard/admin/channels/channel/channel-form/channel-form.schema.ts
 src/components/wrappers/dashboard/admin/channels/helpers/storage.tsx
 src/components/wrappers/dashboard/admin/channels/helpers/common.tsx
