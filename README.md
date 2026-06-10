@@ -191,15 +191,29 @@ Used the folder structure (google-cloud-storage/index.ts + sibling files) matchi
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when submitted]
+**PR Link:** [GitHub PR URL when submitted](https://github.com/Portabase/portabase/pull/316)
 
 **PR Description:** [Draft or final PR description - much of the content above can be adapted]
+# Validation Requirements screenshots:
+- “Add Storage Channel” dialog showing Google Cloud Storage as an available provider
+<img width="1470" height="798" alt="dialog-providers" src="https://github.com/user-attachments/assets/6a8a3cc1-a43a-4db2-b627-81c986f0a75b" />
+
+- Google Cloud Storage configuration form in create mode
+<img width="744" height="751" alt="create-mode-default" src="https://github.com/user-attachments/assets/06f9798a-10cf-4be6-85af-8606f5970c40" />
+<img width="597" height="700" alt="create-mode-filled" src="https://github.com/user-attachments/assets/4182d7c7-69b5-44d1-9bb2-cd630beeeefe" />
+
+- Google Cloud Storage configuration form in edit mode
+<img width="575" height="728" alt="edit-mode" src="https://github.com/user-attachments/assets/276be101-f48f-46fb-900c-9d0f5afc4826" />
+<img width="1468" height="798" alt="after-changed" src="https://github.com/user-attachments/assets/dba0f488-7fc7-4a04-899c-84fbc8db81ad" />
+
+___________________________
+Note: the ping/upload path hasn't been tested against a real GCS bucket yet, but the UI is fully functional
 
 **Maintainer Feedback:**
 - [Date]: [Summary of feedback received]
 - [Date]: [How you addressed it]
 
-**Status:** [Awaiting review / Iterating / Approved / Merged]
+**Status:** Awaiting review
 
 ---
 
@@ -207,20 +221,18 @@ Used the folder structure (google-cloud-storage/index.ts + sibling files) matchi
 
 ### Technical Skills Gained
 
-[What you learned technically]
+- How a provider-plugin architecture is wired across layers in a Next.js + Drizzle codebase: backend handler → registry Record<Kind, Handler> → Zod discriminated union → React form → form renderer.
+- Drizzle pgEnum workflow: changing an enum requires drizzle-kit generate to emit an ALTER TYPE ... ADD VALUE migration; the TS type alone isn't enough.
+- The @google-cloud/storage SDK: authenticating with in-memory credentials (vs. a key file), streaming uploads via createWriteStream, and generating signed URLs with getSignedUrl.
+- The react-hook-form controlled-input pattern (value={field.value ?? ""}) and why the uncontrolled→controlled warning happens.
 
 ### Challenges Overcome
-
-[What was hard and how you solved it]
+- Stale documentation in a large repo: the issue's file paths were wrong. Learned to navigate by searching for stable symbols/patterns rather than trusting given paths, and to trace one working example (S3) end-to-end as a template.
+- A hidden requirement the plan missed: the DB enum migration. The TypeScript compiler caught it — I used tsc --noEmit to find every place the new provider value needed to be accepted, then traced the error into the Drizzle schema.
+- Distinguishing my errors from pre-existing ones: when tsc showed errors in channel-form.tsx, I git stash-ed my work and re-ran the typecheck to confirm those errors already existed on the branch and weren't introduced by my change.
 
 ### What I'd Do Differently Next Time
 
-[Reflection on your process]
-
----
-
-## Resources Used
-
-- [Link to helpful documentation]
-- [Tutorial or Stack Overflow post that helped]
-- [GitHub issues or discussions that helped]
+- Run tsc --noEmit and a build before writing the UI layer — the DB enum requirement would have surfaced immediately instead of after the wiring was done.
+- Establish a baseline (tsc on a clean tree) at the very start, so distinguishing new vs. pre-existing errors is instant.
+- Make small, descriptive commits as I go rather than one WIP commit — easier for a mentor/reviewer to follow the progression.
