@@ -9,7 +9,7 @@
 
 ## Why I Chose This Issue
 
-I chose this issue because it aligns with my interest in Cloud and familiarity with TypeScript and React. The goal is to extend the codebase to support a new Cloud provider, which matches my beginner-level experience in Cloud and would be a good opportunitity to hone my skils. Additionally, I haven't used TypeScript and React in a while, so this would be a good callback and try to incorporate it with something new. The project itself is a database application, which also appeals to me as I plan to 
+I chose this issue because it aligns with my interest in Cloud and familiarity with TypeScript and React. The goal is to extend the codebase to support a new Cloud provider, which matches my beginner-level experience in Cloud and would be a good opportunitity to hone my skils. Additionally, I haven't used TypeScript and React in a while, so this would be a good callback and try to incorporate it with something new. The project itself is a database application, which also appeals to me as I plan to work on a personal project related to databases and will take a database management class soon.
 
 The issue is clearly defined in the original codebase, with specific files destinations for each feature requirement and a complete task checklist, making it an especially good first issue to get started on working with open source.
 
