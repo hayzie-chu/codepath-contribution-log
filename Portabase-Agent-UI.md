@@ -28,7 +28,7 @@ The Agent counter should decrement whenever the user deletes an agent on the UI 
 
 ### Current Behavior
 
-The counter stays the same, and still counts the deleted agent. But adding a new agent still updates it correctly.
+The counter stays the same, and still counts the deleted agent. 
 
 ### Affected Components
 
@@ -61,9 +61,10 @@ The same process as [https://github.com/hayzie-chu/opensource-contribution-log/b
 
 ### Reproduction Evidence
 
-- **Commit showing reproduction:** [Link to commit in your fork]
+- **Commit showing reproduction:** N/A because already using the reproduction from [previous forked commit](https://github.com/hayzie-chu/opensource-contribution-log/blob/main/Portabase-Google-Cloud.md), and the issue is UI-only
 - **Screenshots/logs:** [If applicable]
-- **My findings:** [What you discovered during reproduction]
+- **My findings:** The count is only incorrect when deleting agents, not for adding. Even if you add after deleting the agent, it still increases by 1. So the issue isn't some stale counter state, but that it's counting deleted agents as active.
+
 
 ---
 
@@ -71,7 +72,7 @@ The same process as [https://github.com/hayzie-chu/opensource-contribution-log/b
 
 ### Analysis
 
-[Your analysis of the root cause - what's causing the issue?]
+The root cause is the dashboard count query has no isArchived filter. When an agent is deleted, in the database, the row isn't removed but it just sets isArchived to true and add deletedAt.
 
 ### Proposed Solution
 
