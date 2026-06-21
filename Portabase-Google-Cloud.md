@@ -131,8 +131,22 @@ The original application is not yet fully functional and doesn't require unit or
 2. Fill in the form in create mode and save, ensure the form appears and works similarly to other providers.
 3. Reopen the form in edit mode.
 4. Take screenshots of all three states for the PR.
-5. [Optional] Test against a real GCS bucket with a service account key to confirm ping and upload work end-to-end.
 
+### Integration test against a real GCS bucket 
+1. Add a filesystem backend and preload a bucket folder using the given docker-compose.gcs.yml script
+2. Run from the repo root to create the preloaded bucket folder
+    - ``` mkdir -p gcs-data/test-bucket ```
+    - ``` echo "hello" > gcs-data/test-bucket/seed.txt ```
+3. Start fake server and confirm it's runnning 
+    - ``` docker compose -f docker-compose.gcs.yml up -d ```
+    - ``` curl http://localhost:4443/storage/v1/b ```
+    - [Expected output] test-bucket in the JSON
+4. Create the test script using exported functions in index.ts and GoogleCloudStorageConfig type in types.ts
+5. Run this script:
+    - ``` GCS_EMULATOR_HOST=http://localhost:4443 npx tsx scripts/test-gcs.ts ```
+    - Expected output] each operation prints success: true, and the get step prints content: hello world
+6. Tear down when done
+    - ``` docker compose -f docker-compose.gcs.yml down ```
 
 ---
 
@@ -157,35 +171,42 @@ Challenges faced:
 - The provider key was inconsistent: the UI placeholder used gcs, but the type system, schema literals, and renderer needed to agree. Standardized on google-cloud-storage everywhere (safe since the placeholder was never functional).
 - tsc surfaced an error the issue's plan never mentioned: the provider column is a Postgres pgEnum, so adding the value to the TS union wasn't enough — it required a schema change + drizzle-kit migration. Found the precedent in migration 0032 (which had added google-drive the same way) and matched it.
 - React "uncontrolled → controlled input" warning when filling the form: create-mode resets the form to {enabled: true}, so config fields start undefined. Fixed by making each field controlled from mount with value={field.value ?? ""}.
+- Testing with a real GCS bucket locally. I initially used STORAGE_EMULATOR_HOST as the env var, which was wrong for this library version. If STORAGE_EMULATOR_HOST is set, it uses the bare host and drops /storage/v1 → every request 404s → your code reports "Bucket does not exist". 
 
 Decisions made:
 
 - Used the folder structure (google-cloud-storage/index.ts + sibling files) matching the google-drive/ provider, rather than the flat single-file s3.ts style — keeps related files grouped.
 - Took clientEmail + privateKey as separate fields (passed to the SDK as credentials) rather than a key-file path, since config is stored in the DB and the app can't rely on a filesystem key file. Normalize escaped newlines (\\n → \n) so a key pasted from a service-account JSON works.
 - ensureBucket does not auto-create the bucket (unlike uploadS3) as GCS bucket names are globally unique and creation needs a location, so it errors clearly if the bucket is missing instead.
+- For testing purposes, I switched from STORAGE_EMULATOR_HOST to GCS_EMULATOR_HOST so it doesn't collide and passes as apiEndpoint.
 
 
 ### Code Changes
 
-- **Files added:** 
-src/features/channel/storages/google-cloud-storage/index.ts 
-src/features/channel/storages/google-cloud-storage/google-cloud-storage.form.tsx 
-src/features/channel/storages/google-cloud-storage/google-cloud-storage.schema.ts
-src/features/channel/storages/google-cloud-storage/types.ts
-src/db/migrations/0058_tense_tana_nile.sql (+ snapshot/journal)
+- **Files added:**
+  - implementation
+    - src/features/channel/storages/google-cloud-storage/index.ts 
+    - src/features/channel/storages/google-cloud-storage/google-cloud-storage.form.tsx 
+    - src/features/channel/storages/google-cloud-storage/google-cloud-storage.schema.ts
+    - src/features/channel/storages/google-cloud-storage/types.ts
+    - src/db/migrations/0058_tense_tana_nile.sql (+ snapshot/journal)
+  - tests
+    - docker-compose.gcs.yml
+    - scripts/test-gcs.ts
 
 - **Files modified:** 
-src/features/storages/storages.types.ts — StorageProviderKind
-src/features/channel/storages/index.ts — handler registration
-src/features/channel/channel-form.schema.ts — discriminated-union case
-src/features/channel/channels-helpers.tsx — renderChannelForm case
-src/features/channel/channels-storage-helper.tsx — removed preview: true, renamed gcs → google-cloud-storage
-src/db/schema/12_storage-channel.ts — provider_storage_kind enum
-package.json / pnpm-lock.yaml — added @google-cloud/storage
+  - src/features/storages/storages.types.ts — StorageProviderKind
+  - src/features/channel/storages/index.ts — handler registration
+  - src/features/channel/channel-form.schema.ts — discriminated-union case
+  - src/features/channel/channels-helpers.tsx — renderChannelForm case
+  - src/features/channel/channels-storage-helper.tsx — removed preview: true, renamed gcs → google-cloud-storage
+  - src/db/schema/12_storage-channel.ts — provider_storage_kind enum
+  - package.json / pnpm-lock.yaml — added @google-cloud/storage
 
 - **Key commits:** [working UI, not yet tested](https://github.com/hayzie-chu/portabase/commit/3765b8b27462bb3d2558202b4b714a1b76faa1db)
 - **Approach decisions:** [Why you chose certain approaches]
-Used the folder structure (google-cloud-storage/index.ts + sibling files) matching the google-drive/ provider, rather than the flat single-file s3.ts style — keeps related files grouped. Took clientEmail + privateKey as separate fields (passed to the SDK as credentials) rather than a key-file path, since config is stored in the DB and the app can't rely on a filesystem key file. Normalize escaped newlines (\\n → \n) so a key pasted from a service-account JSON works. ensureBucket does not auto-create the bucket (unlike uploadS3) as GCS bucket names are globally unique and creation needs a location, so it errors clearly if the bucket is missing instead.
+
+I used the folder structure (google-cloud-storage/index.ts + sibling files) to match the google-drive/ provider, rather than the flat single-file s3.ts style, which keeps related files grouped. Took clientEmail + privateKey as separate fields (passed to the SDK as credentials) rather than a key-file path, since config is stored in the DB and the app can't rely on a filesystem key file. Normalize escaped newlines (\\n → \n) so a key pasted from a service-account JSON works. ensureBucket does not auto-create the bucket (unlike uploadS3) as GCS bucket names are globally unique and creation needs a location, so it errors clearly if the bucket is missing instead.
 
 ---
 
@@ -210,8 +231,8 @@ ___________________________
 Note: the ping/upload path hasn't been tested against a real GCS bucket yet, but the UI is fully functional
 
 **Maintainer Feedback:**
-- [Date]: [Summary of feedback received]
-- [Date]: [How you addressed it]
+- [Jun 19th]: Needs to be tested with a real GCS bucket, using the https://github.com/fsouza/fake-gcs-server to test the integration.
+- [Jun 21st]: I read through the linked repo and given docker compose yml script, created a new test directory and relevant scripts to test with a real bucket, making a minor change to the codebase that is needed for local tests, not production.
 
 **Status:** Awaiting review
 
