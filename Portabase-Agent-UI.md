@@ -62,8 +62,12 @@ The same process as [https://github.com/hayzie-chu/opensource-contribution-log/b
 ### Reproduction Evidence
 
 - **Commit showing reproduction:** N/A because already using the reproduction from [previous forked commit](https://github.com/hayzie-chu/opensource-contribution-log/blob/main/Portabase-Google-Cloud.md), and the issue is UI-only
-- **Screenshots/logs:** [If applicable]
-- **My findings:** The count is only incorrect when deleting agents, not for adding. Even if you add after deleting the agent, it still increases by 1. So the issue isn't some stale counter state, but that it's counting deleted agents as active.
+- **Screenshots/logs:** 
+<img width="1470" height="956" alt="Screenshot 2026-06-26 at 2 28 49 PM" src="https://github.com/user-attachments/assets/00408eed-a31b-4611-80ac-ab270794298e" />
+<img width="1470" height="956" alt="Screenshot 2026-06-26 at 2 29 04 PM" src="https://github.com/user-attachments/assets/5591e06a-bedc-460b-945e-0414c095113a" />
+<img width="1470" height="956" alt="Screenshot 2026-06-26 at 2 28 55 PM" src="https://github.com/user-attachments/assets/135f36d9-5d1b-4a9d-863b-46472533ce1c" />
+
+- **My findings:** The count is only incorrect when deleting agents, not for adding. For example if you have 2 total agents both active, and delete 1, it still says 2 agents. And after that, if you add a new agent, it still increases by 1, resulting in the total count of 3. So the issue isn't some stale counter state, but that it's counting deleted agents as active.
 
 
 ---
