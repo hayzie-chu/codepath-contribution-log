@@ -1,9 +1,12 @@
 # Contribution 2: Update Agent Counter 
 
-**Contribution Number:** 2
+**Contribution Number:** 2 
+
 **Student:** Nhi Chu (Hayzie)
+
 **Issue:** [https://github.com/Portabase/portabase/issues/271]
-**Status:** [Phase II] [In progress]
+
+**Status:** [Phase III] [In progress]
 
 ---
 
