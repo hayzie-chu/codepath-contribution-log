@@ -1,10 +1,10 @@
-# Contribution [3]: [Issue Title]
+# Contribution 3: E2E test for foreign provider config path auth substitution
 
 **Contribution Number:** 3
 
 **Student:** Nhi Chu
 
-**Issue:** [GitHub issue link]  
+**Issue:** [GitHub issue link](https://github.com/near/mpc/issues/2786)
 
 **Status:** [Phase I] [In Progress]
 
@@ -13,6 +13,8 @@
 ## Why I Chose This Issue
 
 [1-2 paragraphs explaining why this issue interests you, how it matches your skills/learning goals, what you hope to learn]
+- security, cryptography
+- tests: end-to-end based on unit tests and bug fix 
 
 ---
 
