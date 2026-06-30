@@ -1,8 +1,11 @@
 # Contribution [3]: [Issue Title]
 
-**Contribution Number:** [1 / 2 / 3]  
+**Contribution Number:** 3
+
 **Student:** Nhi Chu
+
 **Issue:** [GitHub issue link]  
+
 **Status:** [Phase I] [In Progress]
 
 ---
